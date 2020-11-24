@@ -6,9 +6,10 @@
 typedef struct STnode* link;
 typedef struct {
     Key key;
+    int type; // 0: internal (ref is link); 1: external (ref is item)
     union {
         link next;
-        Item item;
+        Item *item;
     } ref;
 } entry;
 
@@ -46,15 +47,19 @@ BTree* BTree_init(int M) {
 
 static void delR(link h, int H) { // altereted
     int j;
-    if(H == 0)
-        return;
+    if(H == 0) {
+        for(j = 0; j < h->m; j++)
+            DELitem(h->b[j].ref.item);
+        free(h->b);
+    }
 
-    if(H != 0)
+    if(H != 0) {
         for(j = 0; j < h->m; j++) {
             delR(h->b[j].ref.next, H-1);
-            free(h->b[j].ref.next->b);
             free(h->b[j].ref.next);
         }
+        free(h->b);
+    }
 }
 
 void BTree_del(BTree *bt) { // altereted
@@ -64,12 +69,11 @@ void BTree_del(BTree *bt) { // altereted
     }
 
     delR(bt->head, bt->H);
-    free(bt->head->b);
     free(bt->head);
     free(bt);
 }
 
-static Item searchR(link h, Key v, int H) {
+static Item* searchR(link h, Key v, int H) {
     int j;
     if(H == 0)
         for(j = 0; j < h->m; j++)
@@ -82,7 +86,7 @@ static Item searchR(link h, Key v, int H) {
     return NULLitem;
 }
 
-Item BTree_search(BTree *bt, Key v) {
+Item* BTree_search(BTree *bt, Key v) {
     if(bt == NULL) { // altereted
         printf("ERROR***: NULL BTree\n");
         return NULLitem;
@@ -100,7 +104,7 @@ static link split(link h, int M) {
     return t;
 }
 
-static link insertR(link h, Item item, int H, int M) {
+static link insertR(link h, Item *item, int H, int M) {
     int i, j;
     Key v = key(item);
     entry x;
@@ -133,7 +137,7 @@ static link insertR(link h, Item item, int H, int M) {
         return split(h, M);
 }
 
-void BTree_insert(BTree *bt, Item item) {
+void BTree_insert(BTree *bt, Item *item) {
     if(bt == NULL) { // altereted
         printf("ERROR***: NULL BTree\n");
         return;
