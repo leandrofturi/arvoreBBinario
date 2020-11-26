@@ -3,11 +3,15 @@
 
 #include "stdio.h"
 
+#define BLOCK_SIZE 4096
 
 // Write record
 void write_record(char*, char*, FILE*);
 
-// Print a binary file
-void hexdump(char*, char*);
+// Caminha a partir de uma posição do arquivo buscando os dados de uma chave
+char* walk(int, FILE*);
+
+// Desativa um cliente
+void disable(int, FILE*);
 
 #endif

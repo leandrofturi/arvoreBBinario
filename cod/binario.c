@@ -13,18 +13,29 @@ void write_record(char *identificador, char *valor, FILE *f) {
     fwrite(identificador, 1, strlen(identificador), f); // Escreve identificador
     fwrite(&v, 1, 1, f); // Escreve a vírgula
     fwrite(valor, 1, strlen(valor), f); // Escreve o valor
+
+    // hexdump -C out.txt
 }
 
+char* walk(int n, FILE *f) {
+    char ativo, *data;
+    int tam;
 
-/*
-    Tests
+    fseek(f, n, SEEK_SET);
+    fread(&tam, sizeof(int), 1, f);
+    fread(&ativo, 1, 1, f);
+    if(ativo == 0) // se o registro estiver marcado como inativo no arquivo, não mostrar nada na tela
+        return NULL;
 
-int main(int argc, char *argv[]) {
-    FILE *f = fopen("out.txt", "w");
-    write_record("ed2", "facil", f);
-    write_record("paa", "deboa", f);
-    write_record("tc", "suave", f);
-    write_record("cd", "jafoi", f);
-    //hexdump -C out.txt
+    data = malloc(tam+1);
+    fread(data, 1, tam, f);
+    data[tam] = '\0';
+
+    return data;
 }
-*/
+
+void disable(int n, FILE *f) {
+    int flag = 0;
+    fseek(f, n+4, SEEK_SET); // caso o identificador esteja marcado como inativo no arquivo, nada deve ser feito
+    fwrite(&flag, 1, 1, f); // caso o identificador esteja no índice e marcado como ativo no arquivo, marque-o como inativo
+}
