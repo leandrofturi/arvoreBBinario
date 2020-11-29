@@ -6,6 +6,7 @@
 
 #define BLOCK_SIZE 4096
 
+
 // Write record
 void write_record(char*, char*, FILE*);
 

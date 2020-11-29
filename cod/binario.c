@@ -19,12 +19,14 @@ void write_record(char *identificador, char *valor, FILE *f) {
 
 int load(FILE *f, BTree *bt) {
     char ativo, *data, aux[BLOCK_SIZE];
-    int tam, pos, c = 0;
-    // Problemas aqui
+    int t, tam, pos, c = 0;
+
     fseek(f, 0, SEEK_SET);
     while(!feof(f)) {
         pos = ftell(f);
-        fread(&tam, sizeof(int), 1, f);
+        t = fread(&tam, sizeof(int), 1, f);
+        if(t <= 0) break;
+
         fread(&ativo, 1, 1, f);
         fread(aux, 1, tam, f);
 
