@@ -4,13 +4,16 @@
 
 Item* NEWitem(char *id, int pos) {
     Item *A = malloc(sizeof(Item));
-    A->id = id;
+    int n = strlen(id);
+    A->id = malloc(n+1);
+    strcpy(A->id, id);
+    A->id[n] = '\0';
     A->pos = pos;
     return A;
 }
 
 void DELitem(Item *A) {
-    //free(A->id);
+    free(A->id);
     free(A);
 }
 

@@ -16,5 +16,6 @@ Item* BTree_search(BTree*, Key);
 
 void BTree_insert(BTree*, Item*);
 
+void BTree_2file(BTree*, FILE*, FILE*);
 
 #endif

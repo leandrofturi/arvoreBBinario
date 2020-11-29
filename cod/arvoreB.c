@@ -1,12 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "../bib/arvoreB.h"
+#include "../bib/binario.h"
 
 
 typedef struct STnode* link;
 typedef struct {
     Key key;
-    int type; // 0: internal (ref is link); 1: external (ref is item)
     union {
         link next;
         Item *item;
@@ -157,16 +158,33 @@ void BTree_insert(BTree *bt, Item *item) {
     bt->H++;
 }
 
+static void writeR(link h, int H, FILE *f, FILE *o) { // altereted
+    int j;
+    char *tmp;
+    if(H == 0)
+        for(j = 0; j < h->m; j++) {
+            tmp = walk(h->b[j].ref.item->pos, f);
+            if(tmp) {
+                fprintf(o, "%s: %s\n", h->b[j].key, strchr(tmp, ',') + 1);
+                free(tmp);
+            }
+        }
 
-/*
-    Tests
-int main(int argc, char *argv[]) {
-    BTree *bt = BTree_init(4);
-    for(int i = 0; i < 10; i++)
-        BTree_insert(bt, i);
-    for(int i = 0; i < 10; i++)
-        printf("%d\n", BTree_search(bt, i));
-    printf("%d\n", BTree_search(bt, 11));
-    BTree_del(bt);
+    if(H != 0)
+        for(j = 0; j < h->m; j++) {
+            tmp = walk(h->b[j].ref.item->pos, f);
+            if(tmp) {
+                fprintf(o, "%s: %s\n", h->b[j].key, strchr(tmp, ',') + 1);
+                free(tmp);
+            }
+            writeR(h->b[j].ref.next, H-1, f, o);
+        }
 }
-*/
+
+void BTree_2file(BTree *bt, FILE *f, FILE *o) { // altereted
+    if(bt == NULL) {
+        printf("ERROR***: NULL BTree\n");
+        return;
+    }
+    writeR(bt->head, bt->H, f, o);
+}
