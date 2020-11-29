@@ -20,7 +20,7 @@ void write_record(char *identificador, char *valor, FILE *f) {
 int load(FILE *f, BTree *bt) {
     char ativo, *data, aux[BLOCK_SIZE];
     int tam, pos, c = 0;
-
+    // Problemas aqui
     fseek(f, 0, SEEK_SET);
     while(!feof(f)) {
         pos = ftell(f);
@@ -45,6 +45,9 @@ int load(FILE *f, BTree *bt) {
 char* walk(int n, FILE *f) {
     char ativo, *data;
     int tam;
+    fseek(f, 0, SEEK_END);
+    if(n == ftell(f))
+        return NULL;
 
     fseek(f, n, SEEK_SET);
     fread(&tam, sizeof(int), 1, f);

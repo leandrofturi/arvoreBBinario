@@ -22,7 +22,7 @@ void processamento(int M, char *filebin) {
     n = access(filebin, F_OK);
     if(n == -1) { // file doesn't exists
         if((f = fopen(filebin, "w")) == NULL) { // create a file
-            printf("ERROR***: %s not found\n", filebin);
+            printf("ERROR***: can't open %s\n", filebin);
             return;
         }
         else fclose(f);
@@ -86,7 +86,7 @@ void processamento(int M, char *filebin) {
         else if(strncmp(cmd, "RUNDOWN", 7) == 0) {
             sscanf(cmd, "RUNDOWN %s", aux);
             if((o = fopen(aux, "w")) == NULL)
-                printf("ERROR***: %s not found\n", aux);
+                printf("ERROR***: can't open %s\n", aux);
             else {
                 BTree_2file(bt, f, o);
                 fclose(o);

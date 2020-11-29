@@ -98,10 +98,10 @@ Item* BTree_search(BTree *bt, Key v) {
 static link split(link h, int M) {
     int j;
     link t = NEW(M);
-    for(j = 0; j < M/2; j++)
+    for(j = 0; j < M/2 + (M % 2); j++) // altereted
         t->b[j] = h->b[M/2+j];
     h->m = M/2;
-    t->m = M/2;
+    t->m = M/2 + (M % 2); // altereted
     return t;
 }
 
@@ -171,14 +171,8 @@ static void writeR(link h, int H, FILE *f, FILE *o) { // altereted
         }
 
     if(H != 0)
-        for(j = 0; j < h->m; j++) {
-            tmp = walk(h->b[j].ref.item->pos, f);
-            if(tmp) {
-                fprintf(o, "%s: %s\n", h->b[j].key, strchr(tmp, ',') + 1);
-                free(tmp);
-            }
+        for(j = 0; j < h->m; j++)
             writeR(h->b[j].ref.next, H-1, f, o);
-        }
 }
 
 void BTree_2file(BTree *bt, FILE *f, FILE *o) { // altereted
